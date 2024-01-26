@@ -12,17 +12,19 @@ import chessServer.ServerConnection;
 
 public class App extends Application {
     private static Scene scene;
+    private static Stage game;
 
     @Override
     public void start(Stage stage) {
         try {
+            game = stage;
             ServerConnection serverConnection = new ServerConnection();
-            scene = new Scene(loadFXML("startScreen"), 640, 480);
+            scene = new Scene(loadFXML("gameScreen"), 640, 480);
             stage.setScene(scene);
-            stage.show();
         } catch (IOException e) {
             // Tratar a exceção de falha na conexão
             exibirMensagemDeErro("Falha ao conectar ao servidor: " + e.getMessage());
+            e.printStackTrace();
             encerrarAplicacao();
         }
     }
@@ -40,6 +42,10 @@ public class App extends Application {
 
     static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml));
+    }
+
+    public static void show(){
+        game.show();
     }
 
     private static Parent loadFXML(String fxml) throws IOException {

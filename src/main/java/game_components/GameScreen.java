@@ -5,8 +5,5 @@ import javafx.fxml.FXML;
 
 public class GameScreen {
 
-    @FXML
-    private void switchToPrimary() throws IOException {
-        App.setRoot("startScreen");
-    }
+   
 }
