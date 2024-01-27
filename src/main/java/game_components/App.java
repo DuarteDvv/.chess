@@ -1,51 +1,44 @@
 package game_components;
 
 import javafx.application.Application;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import chessServer.ServerConnection;
+
 
 import java.io.IOException;
 
-import chessServer.ServerConnection;
-
 public class App extends Application {
     private static Scene scene;
-    private static Stage game;
 
     @Override
     public void start(Stage stage) {
-        try {
-            game = stage;
-            ServerConnection serverConnection = new ServerConnection();
-            scene = new Scene(loadFXML("gameScreen"), 640, 480);
+        ChessServerConnectionService connectionService = new ChessServerConnectionService();
+
+        // Configurar o serviço para exibir a janela do aplicativo quando a conexão for bem-sucedida
+        connectionService.setOnSucceeded(workerStateEvent -> {
+            try {
+                scene = new Scene(loadFXML("gameScreen"), 640, 480);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             stage.setScene(scene);
-        } catch (IOException e) {
-            // Tratar a exceção de falha na conexão
-            exibirMensagemDeErro("Falha ao conectar ao servidor: " + e.getMessage());
-            e.printStackTrace();
+            stage.show();
+        });
+
+        // Configurar o serviço para tratar erros de conexão
+        connectionService.setOnFailed(workerStateEvent -> {
+            exibirMensagemDeErro("Falha ao conectar ao servidor: " + connectionService.getException().getMessage());
+            connectionService.reset();
             encerrarAplicacao();
-        }
-    }
+        });
 
-    private void exibirMensagemDeErro(String mensagem) {
-        // Implementar a lógica para exibir mensagens de erro ao usuário
-        System.err.println("Erro: " + mensagem);
-        // Aqui você pode usar, por exemplo, JavaFX Alert ou outro mecanismo para mostrar mensagens de erro na interface gráfica.
-    }
-
-    private void encerrarAplicacao() {
-        // Implementar a lógica para encerrar a aplicação
-        System.exit(1); // Código de saída não nulo indica um encerramento anormal
-    }
-
-    static void setRoot(String fxml) throws IOException {
-        scene.setRoot(loadFXML(fxml));
-    }
-
-    public static void show(){
-        game.show();
+        // Iniciar o serviço
+        connectionService.start();
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
@@ -53,7 +46,29 @@ public class App extends Application {
         return fxmlLoader.load();
     }
 
+    private void exibirMensagemDeErro(String mensagem) {
+        System.err.println("Erro: " + mensagem);
+        // Aqui você pode usar, por exemplo, JavaFX Alert ou outro mecanismo para mostrar mensagens de erro na interface gráfica.
+    }
+
+    private void encerrarAplicacao() {
+        System.exit(1);
+    }
+
     public static void main(String[] args) {
         launch();
+    }
+}
+
+class ChessServerConnectionService extends Service<Void> {
+    @Override
+    protected Task<Void> createTask() {
+        return new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                ServerConnection connection = new ServerConnection();
+                return null;
+            }
+        };
     }
 }

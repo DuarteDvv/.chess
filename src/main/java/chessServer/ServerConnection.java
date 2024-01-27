@@ -16,7 +16,7 @@ public final class ServerConnection {
     private BufferedReader serverIn;
     private BufferedWriter clientOut;
 
-    public ServerConnection() throws IOException {
+    public ServerConnection() throws IOException, InterruptedException {
         try {
             establishConnection();
         } catch (IOException e) {
@@ -26,10 +26,23 @@ public final class ServerConnection {
         }
     }
 
-    private void establishConnection() throws IOException {
+    private void establishConnection() throws IOException, InterruptedException {
         try {
             socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+            System.out.println("Connected.");
             serverIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            String message;
+            do{
+                message = serverIn.readLine();
+                System.out.println(message);
+
+                if(message.equals("Game ready... start in 5 seconds")) break;
+
+            }while(true);
+
+            Thread.sleep(5000);
+            
             clientOut = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         } catch (UnknownHostException e) {
             // Tratar a exceção específica para host desconhecido

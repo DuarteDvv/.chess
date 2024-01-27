@@ -25,10 +25,7 @@ public class PlayerHandler implements Runnable {
             while ((message = playerIn.readLine()) != null) {
                 // Processa a mensagem recebida
 
-                if (message.equals("Game ready... start in 5 seconds")) {
-                    // Mostra a cena do jogo para ambos os jogadores
-                    App.show();
-                }
+                System.out.println(message);
             }
         } catch (IOException e) {
             e.printStackTrace();
