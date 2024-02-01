@@ -5,10 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-import game_components.App;
-
-
-
 public class PlayerHandler implements Runnable {
     private Socket playerSocket;
 
@@ -32,4 +28,3 @@ public class PlayerHandler implements Runnable {
         }
     }
 }
-
