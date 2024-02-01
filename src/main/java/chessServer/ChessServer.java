@@ -6,59 +6,57 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-
 public final class ChessServer {
     private static ServerSocket serverSocket;
     private static Socket player1Socket;
     private static Socket player2Socket;
-    private static StatusConexao statusP1;
-    private static StatusConexao statusP2;
+    private static StatusConexao statusP1 = StatusConexao.WAITING;
+    private static StatusConexao statusP2 = StatusConexao.WAITING;
 
     public enum StatusConexao {
-        CONECTADO,
-        AGUARDANDO_CONEXAO
+        CONNECTED,
+        WAITING
     }
 
     public ChessServer(int port) {
         try {
             serverSocket = new ServerSocket(port);
             waitForPlayers();
-           
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void waitForPlayers() {
-    try {
-        System.out.println("Waiting for player 1...");
-        player1Socket = serverSocket.accept();
-        System.out.println("Player 1 connected");
-        setStatusP1(StatusConexao.CONECTADO);
+        try {
+            System.out.println("Waiting for player 1...");
+            player1Socket = serverSocket.accept();
+            setStatusP1(StatusConexao.CONNECTED);
+            System.out.println("Player 1:" + statusP1.toString());
 
-        Thread threadP1 = new Thread(new PlayerHandler(player1Socket));
-        threadP1.start();
+            Thread threadP1 = new Thread(new PlayerHandler(player1Socket));
+            threadP1.start();
 
-        // Envia mensagem ao Player 1
-        sendToPlayer(player1Socket, "Waiting second player...");
+            // Envia mensagem ao Player 1
+            sendToPlayer(player1Socket, "Waiting second player...");
 
-        System.out.println("Waiting for player 2...");
-        player2Socket = serverSocket.accept();
-        sendToPlayer(player1Socket, "Player 2 connected");
-        System.out.println("Player 2 connected");
-        setStatusP2(StatusConexao.CONECTADO);
+            System.out.println("Waiting for player 2...");
+            player2Socket = serverSocket.accept();
+            sendToPlayer(player1Socket, "Player 2 connected");
+            setStatusP2(StatusConexao.CONNECTED);
+            System.out.println("Player 2:" + statusP2.toString());
 
-        
-        Thread threadP2 = new Thread(new PlayerHandler(player2Socket));
-        threadP2.start();
+            Thread threadP2 = new Thread(new PlayerHandler(player2Socket));
+            threadP2.start();
 
-        // Envia mensagem ao Player 1 e Player 2
-        sendToPlayers("Game ready... start in 5 seconds");
+            // Envia mensagem ao Player 1 e Player 2
+            sendToPlayers("Game ready... start in 5 seconds");
 
-    } catch (IOException e) {
-        e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-}
 
     // Adicione o método para enviar mensagens aos jogadores
     private void sendToPlayers(String message) {
@@ -88,13 +86,13 @@ public final class ChessServer {
     private static void setStatusP1(StatusConexao status) {
         statusP1 = status;
     }
-    
+
     private static void setStatusP2(StatusConexao status) {
         statusP2 = status;
     }
 
     public static void main(String[] args) {
         ChessServer server = new ChessServer(8080);
-        
+
     }
 }

@@ -1,8 +1,8 @@
 package game_components;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 
 public class GameScreenControll {
 
@@ -15,23 +15,38 @@ public class GameScreenControll {
     }
 
     private void initializeChessBoard() {
+        // Arrays para representar as peças em cada linha e coluna do tabuleiro
+        String[][] pieces = {
+                { "♖", "♘", "♗", "♕", "♔", "♗", "♘", "♖" },
+                { "♙", "♙", "♙", "♙", "♙", "♙", "♙", "♙" },
+                { "", "", "", "", "", "", "", "" },
+                { "", "", "", "", "", "", "", "" },
+                { "", "", "", "", "", "", "", "" },
+                { "", "", "", "", "", "", "", "" },
+                { "♟", "♟", "♟", "♟", "♟", "♟", "♟", "♟" },
+                { "♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜" }
+        };
+
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                StackPane cell = createCell(row, col);
+                Label cell = createCell(row, col, pieces[row][col]);
                 chessBoard.add(cell, col, row);
             }
         }
     }
 
-    private StackPane createCell(int row, int col) {
-        StackPane cell = new StackPane();
-        cell.setMinSize(60, 60);  // Tamanho mínimo para visualização
+    private Label createCell(int row, int col, String piece) {
+        Label cell = new Label(piece);
+        cell.setMinSize(60, 60); // Tamanho mínimo para visualização
+        cell.setStyle("-fx-background-color: " + determineCellColor(row, col) + ";");
+
+        // Configurar fonte, centralização e ocupação total do espaço
+        cell.setFont(javafx.scene.text.Font.font(45));
+        cell.setAlignment(javafx.geometry.Pos.CENTER);
+        cell.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         // Adicione um manipulador de eventos para clicar nas células
         cell.setOnMouseClicked(event -> handleCellClick(row, col));
-
-        // Adicione estilos ou outras configurações conforme necessário
-        cell.setStyle("-fx-background-color: " + determineCellColor(row, col) + ";");
 
         return cell;
     }
