@@ -107,13 +107,13 @@ public class GameScreenControll {
         if (selectedPieceRow == -1 && selectedPieceCol == -1) {
             // Primeiro clique (selecionar a peça)
             ChessPiece selectedPiece = board[row][col];
-            if (selectedPiece != null) {
+            if (selectedPiece != null && !(selectedPiece instanceof EmptySquare)) {
                 selectedPieceRow = row;
                 selectedPieceCol = col;
                 selectedPiece.setStyle("-fx-border-color: #00FF00;");
+                System.out.println("selecionou: " + selectedPieceRow + " " + selectedPieceCol);
             }
 
-            System.out.println("selecionou: " + selectedPieceRow + " " + selectedPieceCol);
         } else {
             // Segundo clique (mover a peça)
             ChessPiece selectedPiece = board[selectedPieceRow][selectedPieceCol];

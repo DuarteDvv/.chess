@@ -10,7 +10,7 @@ public class Pawn extends ChessPiece {
     }
 
     @Override
-    public boolean move(int toRow, int toCol, ChessPiece[][] board) {
+    public boolean move(int toRow, int toCol, ChessPiece[][] board) { // sexta mexer em troca de player
         int rowDifference = toRow - this.row;
         int colDifference = Math.abs(toCol - this.col);
 
@@ -18,19 +18,20 @@ public class Pawn extends ChessPiece {
         int direction = (this.player == Player.PLAYER_1) ? 1 : -1;
 
         // Condição para avançar uma casa para frente
-        if (rowDifference == direction && colDifference == 0 && board[toRow][toCol] == null) {
+        if (rowDifference == direction && colDifference == 0 && board[toRow][toCol] instanceof EmptySquare) {
             return true;
         }
 
         // Condição para avançar duas casas no início do jogo
         if (rowDifference == 2 * direction && colDifference == 0 && this.row == (this.player == Player.PLAYER_1 ? 1 : 6)
-                && board[toRow][toCol] == null && board[toRow - direction][toCol] == null) {
+                && board[toRow][toCol] instanceof EmptySquare
+                && board[toRow - direction][toCol] instanceof EmptySquare) {
             return true;
         }
 
         // Condição para capturar peça na diagonal
         if (rowDifference == direction && colDifference == 1 &&
-                board[toRow][toCol] != null && board[toRow][toCol].getPlayer() != this.player) {
+                !(board[toRow][toCol] instanceof EmptySquare) && board[toRow][toCol].getPlayer() != this.player) {
             return true;
         }
 
